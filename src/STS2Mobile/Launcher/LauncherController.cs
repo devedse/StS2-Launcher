@@ -131,9 +131,13 @@ public class LauncherController
         switch (result)
         {
             case FastPathResult.ReadyToLaunch:
-                _view.SetStatus($"Welcome back, {_model.AccountName}");
+                var hasCredentials = _model.AccountName != null;
+                var status = hasCredentials
+                    ? $"Welcome back, {_model.AccountName}"
+                    : "Ready to play!";
+                _view.SetStatus(status);
                 var text = _model.InGameMode ? "PLAY" : "RESTART APP";
-                _view.Actions.ShowLaunch(text, showCloudSync: true, showUpdate: true);
+                _view.Actions.ShowLaunch(text, showCloudSync: hasCredentials, showUpdate: hasCredentials);
                 break;
 
             case FastPathResult.AutoConnect:

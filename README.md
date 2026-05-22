@@ -2,7 +2,7 @@
 
 An Android launcher for Slay the Spire 2, built on a custom Godot 4.5.1 engine with .NET/Mono and Harmony runtime patching.
 
-> **Disclaimer**: This is an unofficial community project. Slay the Spire 2 is developed and published by Mega Crit Games. A valid Steam account that owns Slay the Spire 2 is required. Game files are downloaded directly from Steam after authentication. No game assets are included in this repository.
+> **Disclaimer**: This is an unofficial community project. Slay the Spire 2 is developed and published by Mega Crit Games. Steam credentials are required to download game files for the first time. Once game files are present on the device, no Steam login is needed to play. No game assets are included in this repository.
 
 ## Features
 
@@ -20,6 +20,23 @@ An Android launcher for Slay the Spire 2, built on a custom Godot 4.5.1 engine w
   Vulkan pipeline cache persistence and canvas ubershader support to eliminate first-encounter stutters.
 - **Credential security**  
   Steam refresh tokens encrypted at rest via Android Keystore (AES-256-GCM, hardware-backed TEE).
+
+## CI / Automated Builds
+
+A GitHub Actions workflow (`.github/workflows/build.yml`) automatically builds the APK on every push to `main`/`master`.
+
+**Versioning**: each run produces a version name of `<base>.<run_number>` (e.g. `0.2.0.42`) and uses `GITHUB_RUN_NUMBER` as the version code, so every check-in yields a unique, monotonically increasing build.
+
+**Required one-time setup** (see the comments at the top of the workflow file for full details):
+
+1. Create a GitHub Release tagged `build-deps` with two archives:
+   - `android-libs.tar.gz` — Godot engine AAR and native `.so` files for `android/libs/release/`
+   - `godot-export.tar.gz` — `GodotSharp.dll`, `0Harmony.dll`, and `sts2.dll` from your Godot export under `upstream/godot-export/.godot/mono/publish/arm64/`
+
+2. Optionally add repository secrets for signed releases:
+   - `KEYSTORE_BASE64` — Base64-encoded release keystore; if absent the APK is built unsigned
+   - `KEYSTORE_PASSWORD` — Keystore password
+   - `KEYSTORE_ALIAS` — Key alias
 
 ## How It Works
 
