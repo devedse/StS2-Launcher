@@ -88,6 +88,16 @@ public class LauncherModel : IDisposable
             LauncherPatches.SavedRefreshToken = _credentialStore.RefreshToken;
         }
 
+        // If game files are already on device, no Steam login is required to launch.
+        // Any saved credentials are still used for cloud sync and update checks.
+        if (GameFilesReady())
+        {
+            PatchHelper.Log(
+                $"[Launcher] Game files ready — skipping Steam login (creds={_credentialStore.HasCredentials})"
+            );
+            return FastPathResult.ReadyToLaunch;
+        }
+
         var verifier = CreateOwnershipVerifier();
         var hasMarker = verifier?.HasMarker() ?? false;
         PatchHelper.Log(
